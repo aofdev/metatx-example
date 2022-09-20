@@ -106,3 +106,8 @@ yarn start
 1. Open app: [http://localhost:3000/](http://localhost:3000/)
 2. Change to BSC Testnet network in Metamask
 3. Enter a number of mint and sign the metatransaction in MetaMask
+
+## Resources
+
+- [How to Relay Gasless Meta-Transactions](https://docs.openzeppelin.com/defender/guide-metatx)
+- [Repo for example](https://github.com/OpenZeppelin/workshops/tree/master/25-defender-metatx-api)
