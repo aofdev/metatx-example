@@ -1,6 +1,6 @@
 # metatx-example
 
-Using [OpenZeppelin Defender](https://openzeppelin.com/defender)  Client API
+Using [OpenZeppelin Defender](https://openzeppelin.com/defender) Client API
 
 ## Structure
 
@@ -68,7 +68,7 @@ yarn deploy
 
 ### Sign Using Relayer
 
-Sign a request to register a name, this will create a request in `tmp/request.json` that we can then view
+Sign a request to mint, this will create a request in `tmp/request.json` that we can then view
 
 ```js
 yarn sign
