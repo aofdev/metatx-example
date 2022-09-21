@@ -110,4 +110,4 @@ yarn start
 ## Resources
 
 - [How to Relay Gasless Meta-Transactions](https://docs.openzeppelin.com/defender/guide-metatx)
-- [Repo for example](https://github.com/OpenZeppelin/workshops/tree/master/25-defender-metatx-api)
+- [Official examples](https://github.com/OpenZeppelin/workshops/tree/master/25-defender-metatx-api)
