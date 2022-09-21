@@ -16,7 +16,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>Minter</h1>
+        <h1>Demo Minter</h1>
       </header>
       <section className="App-content">
         <EthereumContext.Provider value={ethereumContext}>

@@ -9,8 +9,11 @@ body {
 }
 
 .App-header {
-  background-color: #60b2e8;
-  background-image: linear-gradient(135deg, #60b2e8 0%, #9599E2 100%);
+  background: #C33764;  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to right, #1D2671, #C33764);  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to right, #1D2671, #C33764); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  /* background-color: #60b2e8;
+  background-image: linear-gradient(135deg, #60b2e8 0%, #9599E2 100%); */
   padding: 6rem 0 8rem 0;
   display: flex;
   flex-direction: column;

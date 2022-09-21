@@ -31,8 +31,8 @@ function Minter() {
 
   return <div className="Container">
     <form onSubmit={sendTx}>
-      <input type="number" required={true} placeholder="Mint number" ref={mintInput}></input>
-      <button type="submit" disabled={submitting}>{submitting ? 'Minting...' : 'Minter'}</button>
+      <input type="number" required={true} placeholder="Enter number" ref={mintInput}></input>
+      <button type="submit" disabled={submitting}>{submitting ? 'Minting...' : 'Mint'}</button>
     </form>
   </div>
 }
