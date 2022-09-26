@@ -10,74 +10,138 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 contract AssetMinter is ERC2771Context, Ownable, Pausable, ReentrancyGuard {
-	using SafeERC20 for IERC20;
+    using SafeERC20 for IERC20;
 
-	enum OrderStatus {
-		PENDING,
-		FULFILLED,
-		REJECTED,
-		REFUND
-	}
+    event Mint(
+        uint256 id,
+        address indexed sender,
+        address input,
+        uint256 inputAmount,
+        address indexed asset,
+        uint256 assetAmount,
+        uint256 pricePerUnit,
+        uint256 feeAmount
+    );
+    event SetVault(address sender, address vault);
+    event SetFee(address sender, address to);
 
-	struct Order {
-		address sender;
-		address asset;
-		OrderStatus status;
-		uint256 inputAmount;
-		uint256 feeAmount;
-		uint256 assetAmount;
-		uint256 pricePerUnit;
-		uint256 time;
-		uint256 refundAmount;
-	}
+    enum OrderStatus {
+        PENDING,
+        FULFILLED,
+        REJECTED,
+        REFUND
+    }
 
-	address public immutable inputToken;
-	uint256 public lastId; // starts from 1
-	mapping (uint256 => Order) public orders;
+    struct Order {
+        address sender;
+        address asset;
+        OrderStatus status;
+        uint256 inputAmount;
+        uint256 feeAmount;
+        uint256 assetAmount;
+        uint256 pricePerUnit;
+        uint256 time;
+        uint256 refundAmount;
+    }
 
-	constructor(
-		address _inputToken,
-		MinimalForwarder _trustedForwarder
-	) ERC2771Context(address(_trustedForwarder)) {
-		inputToken = _inputToken;
-	}
+    address public immutable inputToken;
+    address public vault;
+    address public fee;
+    uint256 public lastId; // starts from 1
+    mapping(uint256 => Order) public orders;
 
-	function _msgSender() internal view virtual override(Context, ERC2771Context) returns (address sender) {
-			return ERC2771Context._msgSender();
-	}
+    constructor(
+        address _inputToken,
+        address _vault,
+        address _fee,
+        MinimalForwarder _trustedForwarder
+    ) ERC2771Context(address(_trustedForwarder)) {
+        inputToken = _inputToken;
+        setVault(_vault);
+        setFee(_fee);
+    }
 
-	function _msgData() internal view virtual override(Context, ERC2771Context) returns (bytes calldata) {
-			return ERC2771Context._msgData();
-	}
+    function _msgSender()
+        internal
+        view
+        virtual
+        override(Context, ERC2771Context)
+        returns (address sender)
+    {
+        return ERC2771Context._msgSender();
+    }
 
-	function mint(address asset, uint256 assetAmount, uint256 pricePerUnit) external payable whenNotPaused nonReentrant returns (uint256) {
+    function _msgData()
+        internal
+        view
+        virtual
+        override(Context, ERC2771Context)
+        returns (bytes calldata)
+    {
+        return ERC2771Context._msgData();
+    }
 
-		uint256 inputAmount = (assetAmount * pricePerUnit) / 1 ether;
-		uint256 feeAmount = 0;
+    function setVault(address _vault) public onlyOwner {
+        require(_vault != address(0), "!vault");
+        vault = _vault;
+        emit SetVault(msg.sender, _vault);
+    }
 
-		IERC20(inputToken).safeTransferFrom(_msgSender(), address(this), inputAmount);
+    function setFee(address _fee) public onlyOwner {
+        fee = _fee;
+        emit SetFee(msg.sender, fee);
+    }
 
-		lastId++;
-		orders[lastId] = Order(
-			_msgSender(),
-			asset,
-			OrderStatus.PENDING,
-			inputAmount,
-			feeAmount,
-			assetAmount,
-			pricePerUnit,
-			block.timestamp,
-			0
-		);
+    function mint(
+        address asset,
+        uint256 assetAmount,
+        uint256 pricePerUnit
+    ) external payable whenNotPaused nonReentrant returns (uint256) {
+        uint256 inputAmount = (assetAmount * pricePerUnit) / 1 ether;
+        uint256 feeAmount = (1 * inputAmount) / 1000; // 0.1%
+        uint256 gasAmount = (1 * inputAmount) / 100000; // 0.001%
+        uint256 totalAmount = inputAmount + feeAmount + gasAmount;
 
-		return lastId;
-	}
+        IERC20(inputToken).safeTransferFrom(
+            _msgSender(),
+            address(this),
+            totalAmount
+        );
 
-	function pause() external onlyOwner {
-		_pause();
-	}
+        IERC20(inputToken).safeTransfer(vault, feeAmount);
+        IERC20(inputToken).safeTransfer(fee, gasAmount);
 
-	function unpause() external onlyOwner {
-		_unpause();
-	}
+        lastId++;
+        orders[lastId] = Order(
+            _msgSender(),
+            asset,
+            OrderStatus.PENDING,
+            inputAmount,
+            feeAmount,
+            assetAmount,
+            pricePerUnit,
+            block.timestamp,
+            0
+        );
+
+        emit Mint(
+            lastId,
+            _msgSender(),
+            inputToken,
+            inputAmount,
+            asset,
+            assetAmount,
+            pricePerUnit,
+            feeAmount
+        );
+        return lastId;
+    }
+
+    function pause() external onlyOwner {
+        _pause();
+    }
+
+    function unpause() external onlyOwner {
+        _unpause();
+    }
 }
