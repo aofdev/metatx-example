@@ -9,6 +9,8 @@
     "create-relay": "node scripts/createRelay.js",
     "deploy": "node scripts/deploy.js",
     "sign": "hardhat run scripts/sign.js --network bsc_testnet",
+    "sign-approve": "hardhat run scripts/signApprove.js --network bsc_testnet",
+    "sign-minter": "hardhat run scripts/signMinter.js --network bsc_testnet",
     "verify": "hardhat run scripts/verify.js --network bsc_testnet",
     "build": "rollup -c",
     "invoke": "bash ./scripts/invoke.sh",

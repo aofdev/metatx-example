@@ -11,14 +11,20 @@ function getInstance(name) {
 async function main() {
   const forwarder = await getInstance('MinimalForwarder');
   const assetToken = await getInstance("AssetToken");
+  const assetMinter = await getInstance("AssetMinter");
 
   const { TEST_PRIVATE_KEY: signer } = process.env;
   const from = new ethers.Wallet(signer).address;
-  console.log(`Signing assetToken of mint as ${from}...`);
-  const data = assetToken.interface.encodeFunctionData('mint', [ethers.utils.parseEther("10000")]);
+  console.log(`Signing mint ${from}...`);
   const result = await signMetaTxRequest(signer, forwarder, {
-    to: assetToken.address, from, data
-  });
+    from: from,
+    to: assetMinter.address,
+    data: assetMinter.interface.encodeFunctionData("mint", [
+      assetToken.address,
+      ethers.utils.parseEther("10"),
+      ethers.utils.parseEther("100"),
+    ]),
+  }); 
 
   writeFileSync('tmp/request.json', JSON.stringify(result, null, 2));
   console.log(`Signature: `, result.signature);

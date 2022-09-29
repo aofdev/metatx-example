@@ -15,6 +15,8 @@ async function main() {
   const relaySigner = new DefenderRelaySigner(credentials, provider, {
     speed: 'fast',
   })
+  const vault_address = process.env.VAULT_ADDRESS
+  const fee_address = process.env.FEE_ADDRESS
 
   const Forwarder = await ethers.getContractFactory('MinimalForwarder')
   const forwarder = await Forwarder.connect(relaySigner)
@@ -23,7 +25,12 @@ async function main() {
 
   const AssetToken = await ethers.getContractFactory('AssetToken')
   const assetToken = await AssetToken.connect(relaySigner)
-    .deploy("Asset Token", "aToken", forwarder.address)
+    .deploy("Asset Token 2", "aToken2", forwarder.address)
+    .then((f) => f.deployed())
+
+  const AssetMinter = await ethers.getContractFactory('AssetMinter')
+  const assetMinter = await AssetMinter.connect(relaySigner)
+    .deploy(assetToken.address, vault_address, fee_address, forwarder.address)
     .then((f) => f.deployed())
 
   writeFileSync(
@@ -32,6 +39,7 @@ async function main() {
       {
         MinimalForwarder: forwarder.address,
         AssetToken: assetToken.address,
+        AssetMinter: assetMinter.address,
       },
       null,
       2
