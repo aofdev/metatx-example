@@ -7,6 +7,14 @@ const EIP712Domain = [
   { name: 'verifyingContract', type: 'address' }
 ];
 
+const Permit = [
+  { name: 'owner', type: 'address' },
+  { name: 'spender', type: 'address' },
+  { name: 'value', type: 'uint256' },
+  { name: 'nonce', type: 'uint256' },
+  { name: 'deadline', type: 'uint256' },
+];
+
 const ForwardRequest = [
   { name: 'from', type: 'address' },
   { name: 'to', type: 'address' },
@@ -31,6 +39,14 @@ function getMetaTxTypeData(chainId, verifyingContract) {
     primaryType: 'ForwardRequest',
   }
 };
+
+async function domainSeparator (name, version, chainId, verifyingContract) {
+  return '0x' + ethSigUtil.TypedDataUtils.hashStruct(
+    'EIP712Domain',
+    { name, version, chainId, verifyingContract },
+    { EIP712Domain },
+  ).toString('hex');
+}
 
 async function signTypedData(signer, from, data) {
   // If signer is a private key, use it to sign
@@ -61,7 +77,10 @@ async function signMetaTxRequest(signer, forwarder, input) {
   return { signature, request };
 }
 
-module.exports = { 
+module.exports = {
+  EIP712Domain,
+  Permit,
+  domainSeparator,
   signMetaTxRequest,
   buildRequest,
   buildTypedData,

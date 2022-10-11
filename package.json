@@ -23,9 +23,10 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@nomiclabs/hardhat-ethers": "^2.0.6",
+    "@nomiclabs/hardhat-ethers": "^2.1.1",
     "@nomiclabs/hardhat-waffle": "^2.0.3",
     "@openzeppelin/contracts": "^4.6.0",
+    "@openzeppelin/test-helpers": "^0.5.16",
     "@rollup/plugin-commonjs": "^22.0.2",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^14.1.0",
@@ -37,11 +38,13 @@
     "defender-relay-client": "^1.26.1",
     "dotenv": "^16.0.2",
     "ethereum-waffle": "^3.2.2",
-    "ethers": "^5.6.9",
-    "hardhat": "^2.9.9",
+    "ethers": "^5.7.1",
+    "hardhat": "^2.11.2",
     "rollup": "^2.79.1"
   },
   "dependencies": {
-    "eth-sig-util": "^3.0.1"
+    "eth-sig-util": "^3.0.1",
+    "ethereumjs-util": "^7.1.5",
+    "ethereumjs-wallet": "^1.0.2"
   }
 }
