@@ -25,7 +25,7 @@ async function main() {
 
   const AssetToken = await ethers.getContractFactory('AssetToken')
   const assetToken = await AssetToken.connect(relaySigner)
-    .deploy("Asset Token 2", "aToken2", forwarder.address)
+    .deploy("Asset Token 3", "aToken3", forwarder.address)
     .then((f) => f.deployed())
 
   const AssetMinter = await ethers.getContractFactory('AssetMinter')
